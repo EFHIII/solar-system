@@ -144,12 +144,14 @@ function setup() {
       //new body("Helene",color(230),,e15,),
       //new body("Hippocamp",color(230),,e15,),
 
-      //new body("Phobos",color(230),,e15,),
+      new body("Phobos",color(230),11.267,10.659e15,2.069321721543608E+08, -3.553309714039974E+06, -5.150101792160033E+06, -2.368742384373939E-01,  2.757687588862674E+01,  1.326425169336574E+00),
       //new body("Kerberos",color(230),,e15,),
-      //new body("Deimos",color(230),,e15,),
+      new body("Deimos",color(230),6.2,1.476e15,2.069078452791673E+08, -3.552199204991873E+06, -5.137479041260836E+06,  8.403785206215839E-01,  2.502391499509857E+01,  6.871254361062284E-01),
       //new body("Styx",color(230),,e15,),
 
       new body("Halley's Commet",color(230),5.5,22e15,-2.601883243824225E+09,  2.539468994390954E+09, -1.133567990651788E+09, -2.081803025577760E+00,  3.781514230504282E+00, -1.197131836691762E+00),
+
+      //new body("Styx",color(230),,e15,),
 
 
       //new body(w/6   ,h/2,80000,0, -6,color(255,0,0)),
@@ -160,6 +162,7 @@ function setup() {
       //new body(w*11/12,h/2,1,0,-3,color(50,150,250)),
 
       //new body("2002 AW",color(230),384,3e20,-1.604458904014602E+08,  7.423705729773158E+07, -2.170340085078478E+05, -5.149833263865792E+00, -2.554488985956115E+01,  2.556986405650736E-01),
+      //new body(w/2   ,h/2,3,0, 0,color(0,200,0)),
   ];
   dir=createVector(0,0);
 
@@ -320,7 +323,7 @@ var body=function(name,c,r,mass,x,y,z,vx,vy,vz){
   this.m=mass;//mass
   this.v=createVector(vx,vy,vz);//velocity
   this.c=c;//color
-  this.r=r*2;//radius
+  this.r=r;//radius
   this.hide=false;
   this.id=id++;
   this.counter=0;
