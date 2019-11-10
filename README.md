@@ -1,5 +1,5 @@
 Solar System
-To use, go here: efhiii.github.io/solar-system
+To use, go here: https://efhiii.github.io/solar-system
 # Controls
 function keyPressed() {
   if(holding[1][UP_ARROW]){
