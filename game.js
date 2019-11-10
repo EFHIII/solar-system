@@ -170,7 +170,7 @@ function setup() {
   textFont("monospace");
 }
 var KM_AU=1.496e+8;
-var tickspf=1000;
+var tickspf=100;
 
 var currentDate=946713600000;
 
