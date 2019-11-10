@@ -1,5 +1,8 @@
 Solar System
 To use, go here: https://efhiii.github.io/solar-system
+
+Velocities on J2000 taken from JPL: https://wgc.jpl.nasa.gov:8443/webgeocalc/#StateVector
+Masses and radi taken from a combination of JPL and Wikipedia.
 # Controls
 function keyPressed() {
   if(holding[1][UP_ARROW]){
