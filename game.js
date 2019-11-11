@@ -379,7 +379,7 @@ var mlt=15;
 
 var thetas=[0,0];
 var focusBody=0;
-var speed=1/tickspf/30*60*60*24;
+var speed=360;
 //speed/=1000;
 var sensi=1;
 var trails=true;
@@ -657,7 +657,7 @@ function resetbodies(){
   }
 }
 function goToDate(goTo,stepSize,precision){
-  speed=stepSize?stepSize:360*6;
+  speed=stepSize?stepSize:360;
   var Precision=precision?precision:3;
   resetbodies();
   var j=0
