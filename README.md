@@ -4,195 +4,63 @@ To use, go here: https://efhiii.github.io/solar-system
 Velocities on J2000 taken from JPL: https://wgc.jpl.nasa.gov:8443/webgeocalc/#StateVector
 Masses and radi taken from a combination of JPL and Wikipedia.
 # Controls
-function keyPressed() {
-  if(holding[1][UP_ARROW]){
-    if (key === "w") {
-      tickspf*=1.5;
-    }
-    else if (key === "t") {
-      trailsPerFrame*=1.5;
-    }
-    else if (key === "T") {
-      trailSize*=1.5;
-    }
-  }
-  else if(holding[1][DOWN_ARROW]){
-    if (key === "w") {
-      tickspf/=1.5;
-    }
-    else if (key === "t") {
-      trailsPerFrame/=1.5;
-    }
-    else if (key === "T") {
-      trailSize/=1.5;
-    }
-  }
-  else if(holding[0]["w"]){
-    if (keyCode === UP_ARROW) {
-      tickspf*=1.5;
-    }
-    else if (keyCode === DOWN_ARROW) {
-      tickspf/=1.5;
-      if(tickspf<1){tickspf=1;}
-    }
-    else if (keyCode === LEFT_ARROW) {
-      tickspf=1;
-    }
-    else if (keyCode === RIGHT_ARROW) {
-      tickspf=1000;
-    }
-  }
-  else if(holding[0]["t"]){
-    if (keyCode === UP_ARROW) {
-      trailsPerFrame*=1.5;
-    }
-    else if (keyCode === DOWN_ARROW) {
-      trailsPerFrame/=1.5;
-    }
-    else if (keyCode === LEFT_ARROW) {
-      trailsPerFrame=1;
-    }
-    else if (keyCode === RIGHT_ARROW) {
-      trailsPerFrame/=10;
-    }
-  }
-  else if(holding[0]["T"]){
-    if (keyCode === UP_ARROW) {
-      trailSize*=1.5;
-    }
-    else if (keyCode === DOWN_ARROW) {
-      trailSize/=1.5;
-    }
-  }
-  else if (holding[1][SHIFT]){
-    if (key === " ") {
-      speed=1/tickspf/30*60*60*24*30;
-    }
-    else if (keyCode === BACKSPACE) {
-      scle=5e-7;
-      bubble=2e7;
-      mlt=15;
-    }
-    else if (keyCode === CONTROL) {
-      thetas[1]=-Math.PI/2;
-    }
-    else if (key === "E") {
-      bubble*=15;
-    }
-    else if (key === "D") {
-      bubble/=15;
-    }
-    else if (key === "T") {
-      continuousTrail=!continuousTrail;
-    }
-    else if (key === "Q") {
-      sensi*=1.5;
-    }
-    else if (key === "A") {
-      sensi/=1.5;
-    }
-    else if (key === "R") {
-      resetbodies();
-    }
-    else if (key === "N") {
-      showNames=!showNames;
-    }
-    else if (key === "H") {
-      for(var i=0;i<bodies.length;i++){
-        bodies[i].hide=!bodies[i].hide;
-      }
-      bodies[focusBody].hide=false;
-    }
-    else if (key === "Z") {
-      thetas=[0,0];
-    }
-  }
-  else if (key === " ") {
-    speed=1/tickspf/30;
-  }
-  else if (keyCode === BACKSPACE) {
-    bubble=1;
-    mlt=1;
-  }
-  else if (keyCode === CONTROL) {
-    thetas[1]=0;
-  }
-  else if (key === "z") {
-    thetas=[0,0];
-    scle=5e-7;
-    bubble=1;
-    mlt=1;
-  }
-  else if (key === "o") {
-    pts*=1.5;
-    if(pts>1e10){pts=1e10;}
-    for(var i=0;i<points.length;i++){
-      while(points[i].length<pts){points[i].unshift([-1,-1]);}
-    }
-  }
-  else if (key === "l") {
-    pts/=1.5;
-    if(pts<1){pts=1;}
-    for(var i=0;i<points.length;i++){
-      while(points[i].length>pts){points[i].shift();}
-    }
-  }
-  else if (key === "r") {
-    focusBody++;
-    if(focusBody>=bodies.length){
-      focusBody=0;
-    }
-  }
-  else if (key === "f") {
-    focusBody--;
-    if(focusBody<0){
-      focusBody=bodies.length-1;
-    }
-  }
-  else if (key === "q") {
-    mlt*=1.5;
-  }
-  else if (key === "a") {
-    mlt/=1.5;
-  }
-  else if (key === "w") {
-    speed*=1.5;
-  }
-  else if (key === "s") {
-    speed/=1.5;
-  }
-  else if (key === "e") {
-    bubble*=1.5;
-  }
-  else if (key === "d") {
-    bubble/=1.5;
-  }
-  else if (key === "h") {
-    bodies[focusBody].hide=!bodies[focusBody].hide;
-  }
-  else if (key === "n") {
-    goToDate(new Date().getTime(),360*6);
-  }
-  else if (key === "1") {
-    sunCenter=!sunCenter;
-  }
-  else if (key === "b") {
-    extrude=!extrude;
-  }
-  else if (key === "t") {
-    trails=!trails;
-  }
-  else if (keyCode === LEFT_ARROW) {
-    speed*=-1;
-  }
-  else if (keyCode === UP_ARROW) {
-    scle*=1.5;
-    bubble/=1.5;
-  }
-  else if (keyCode === DOWN_ARROW) {
-    scle/=1.5;
-    bubble*=1.5;
-  }
-  holding[0][key]=true;
-  holding[1][keyCode]=true;
-}
+
+## Zoom
+- `UP ARROW` to zoom in
+- `DOWN ARROW` to zoom out
+
+## Move around
+- `Click+drag` to rotate
+- `R` to look at the next body (ordered by mass)
+- `F` to look at the previous body (ordered by mass)
+- `SHIFT+Q` to increase rotation speed when click+dragging
+- `SHIFT+A` to decrease rotation speed when click+dragging
+- `CTRL` to set view to top down looking down on the ecliptic
+- `SHIFT+CTRL` to set view to looking along the ecliptic
+- `SHIFT+Z` to set view to looking top down, axis aligning x & y rotation
+- `Z` to zoom out to looking top down, axis aligning x & y rotation, and setting size of bodies to true scale
+
+## Time control
+- `SHIFT+R` to reset to back to Jan 1st, 2000 (fast, and good to do if things get off)
+- `W` to increase step size
+- `S` to decrease step size
+- `LEFT Arrow` toggle reverse time
+- `W+UP ARROW` to increase steps per frame
+- `W+DOWN ARROW` to decrease steps per frame
+- `W+LEFT ARROW` to set 1 step per frame
+- `W+RIGHT ARROW` to set 100 steps per frame
+- `SPACE` to set step size to ~real time
+- `SHIFT+SPACE` to set step size to 1 hour per frame
+- `N` to simulate up to today's date (may take a while)
+
+
+## View of bodies
+- `Q` to increase size of bodies exponentially by radius
+- `A` to decrease size of bodies exponentially by radius
+- `E` to increase minimum size of bodies
+- `D` to decrease minimum size of bodies
+- `SHIFT+E` to increase minimum size of bodies 10x
+- `SHIFT+D` to decrease minimum size of bodies 10x
+- `BACKSPACE` to set size of bodies to true scale
+- `SHIFT+BACKSPACE` to set size of bodies to exaggerated scale
+
+## Hide bodies
+- `SHIFT+N` to toggle hide body names
+- `H` to hide current selected body
+- `SHIFT+H` to hide toggle hide all bodies except currently selected body
+
+## Lock with sun
+- `1` to toggle visual lock with sun
+
+## Trails
+- `T` to toggle trails
+- `B` to toggle relative to selected body vs relative to Sun
+- `SHIFT+T` to toggle dotted trails
+- `T+UP ARROW` increase trails dot rate
+- `T+DOWN ARROW` decrease trails dot rate
+- `T+LEFT ARROW` set trails dot rate to 1/frame
+- `T+RIGHT ARROW` set trails dot rate to 10/frame
+- `SHIFT+T+UP ARROW` increase trails stroke width
+- `SHIFT+T+DOWN ARROW` decrease trails stroke width
+- `O` increase points per trail
+- `L` decrease points per trail
