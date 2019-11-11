@@ -1,5 +1,21 @@
-var w,h,points=[],bodies=[],dir,t=255,pts=255/10;
+var w,h,points=[],allBodies=[],bodies=[],dir,t=255,pts=255/10;
 var G=6.67408e-20;
+var presets=[
+  {name:"Minimal",focus:0,bodies:[0,1,2,3,4,5,6,7,10,13,16]},
+  {name:"Named bodies",focus:0,bodies:[]},
+  {name:">1e20 kg bodies",focus:0,bodies:[]},
+  {name:">1e18 kg bodies",focus:0,bodies:[]},
+  {name:"All available bodies",focus:0,bodies:[]},
+  {name:"Inner solar system",focus:0,bodies:[2,3,4,16]},
+  {name:"Outer solar system",focus:0,bodies:[0,1,2,5,6,7,10,13]},
+  {name:"20-- Calaogued",focus:0,bodies:[0,1,2,3,4,5,6,7,10,13,16]},
+  {name:"Jupiter's moons",focus:1,bodies:[0,1,2,3,4,5,6,7,10,13,16]},//jupiter
+  {name:"Saturn's moons",focus:2,bodies:[0,1,2,3,4,5,6,7,10,13,16]},//saturn
+  {name:"Uranus' moons",focus:4,bodies:[0,1,2,3,4,5,6,7,10,13,16]},//Uranus
+  {name:"Neptune's moons",focus:3,bodies:[0,1,2,3,4,5,6,7,10,13,16]},//Neptune
+  {name:"Pluto's moons",focus:10,bodies:[0,1,2,3,4,5,6,7,10,13,16]},//Pluto
+];
+var onPreset=0;
 function setup() {
   createCanvas(windowWidth, windowHeight);
   frameRate(60);
@@ -7,7 +23,7 @@ function setup() {
   h=height;
   points=[];
   //body(name,color,radius,mass,x,y,z,vx,vy,vz)
-  bodies=[
+  allBodies=[
       new body("Sun",color(255,255,200),695700,1988500e24,-1.068000648301820E+06, -4.176802125684930E+05,  3.084467020687090E+04,  9.305300847631915E-03, -1.283176670344807E-02, -1.631528028381386E-04),
       new body("Jupiter",color(140,140,100),69911,1898.13e24,5.978411588543636E+08,  4.387049129308410E+08, -1.520170148446965E+07, -7.892632330758821E+00,  1.115034520921672E+01,  1.305097532924950E-01),
       new body("Saturn",color(230,170,125),58232,5.6834e26,9.576383364778246E+08,  9.821475307691972E+08, -5.518981181329101E+07, -7.419580383283150E+00,  6.725982472902061E+00,  1.775012040472701E-01),
@@ -272,7 +288,7 @@ function setup() {
       new body("Sinope",color(230),19,10e15,5.738143399296634E+08,  4.559599310625801E+08, -1.081422488191107E+07, -7.228622190135846E+00,  1.255630552477879E+01, -6.037103113377418E-01),
       new body("Lysithea",color(230),18,10e15,6.079362329750634E+08,  4.413764813162307E+08, -1.466465057080615E+07, -9.096835509156953E+00,  1.417623964840523E+01,  1.811989956556200E+00),
       new body("Helene",color(230),17.6,10e15, 9.577902091883619E+08,  9.818374040405532E+08, -5.504202743429202E+07,  1.740086065626104E+00,  1.004435120174771E+01, -2.405910012833302E+00),
-      new body("Hippocamp",color(230),17.4,50e15,2.513764824691495E+09, -3.739171237206272E+09,  1.911309093798208E+07, -2.869863251636797E+00,  4.972164318037307E-01),
+      new body("Hippocamp",color(230),17.4,50e15,2.513764824691495E+09, -3.739171237206272E+09,  1.911309093798208E+07, -2.869863251636797E+00,  4.972164318037307E-01,  1.930661184560841E+00),
       new body("Albiorix",color(230),16,5e15,9.526379909598078E+08,  9.759114658299731E+08, -4.996524529699218E+07, -6.319621218776243E+00,  4.633643916900369E+00, -2.857491765580455E-02),
       new body("Stephano",color(230),16,5e15,2.158950794979879E+09, -2.061704196800805E+09, -4.080142584160972E+07,  3.843557774819359E+00,  4.553395250406477E+00,  1.398449735007490E-02),
 
@@ -342,13 +358,13 @@ function setup() {
       //new body("Solar System Barycenter (SSB)",color(0),0,0,0,0,0,[0]),
       //new body("Mercury Barycenter",color(0),0,0,-2.212062175862221E+07, -6.682431829610253E+07, -3.461601353176080E+06, 3.666229236478603E+01, -1.230266986781422E+01, -4.368336051784789E+00,[8]),
       //new body("Venus Barycenter",color(0),0,0,-1.085735509178141E+08, -3.784200933160055E+06,  6.190064472977990E+06,  8.984651054838754E-01, -3.517203950794635E+01, -5.320225582712421E-01,[6]),
-      new body("Earth-Moon Barycenter (EMB)",color(0),0,0,-2.628278892285838E+07,  1.445073003367372E+08,  3.067235597968847E+04, -2.982371414236500E+01, -5.230185329768933E+00, -1.213810126514669E-04,[5,13]),
+        //new body("Earth-Moon Barycenter (EMB)",color(0),0,0,-2.628278892285838E+07,  1.445073003367372E+08,  3.067235597968847E+04, -2.982371414236500E+01, -5.230185329768933E+00, -1.213810126514669E-04,[5,13]),
       //new body("Mars Barycenter",color(0),0,0,2.069270543360729E+08, -3.560689811477710E+06, -5.147936603828508E+06,  1.304308812694964E+00,  2.628158892250333E+01,  5.188465934952333E-01,[7]),
       //new body("Jupiter Barycenter",color(0),0,0,5.978411018921824E+08,  4.387049769612203E+08, -1.520170016953275E+07, -7.892151874487445E+00,  1.114945115750926E+01,  1.304862310943014E-01,[1]),
       //new body("Saturn Barycenter",color(0),0,0,9.576381404895931E+08,  9.821477386679871E+08, -5.518990106544006E+07, -7.420583259777167E+00,  6.725272210562052E+00,  1.779635671891335E-01,[2]),
       //new body("Uranus Barycenter",color(0),0,0,2.157706693154863E+09, -2.055242913196469E+09, -3.559266720965648E+07,  4.646804486524291E+00,  4.614387135494279E+00, -4.306254213333638E-02,[4]),
       //new body("Neptune Barycenter",color(0),0,0,2.513785356833091E+09, -3.739265096828156E+09,  1.907035719387865E+07,  4.475371931235400E+00,  3.063567701145199E+00, -1.662252948584049E-01,[3]),
-      new body("Pluto Barycenter",color(0),0,0,-1.478626345058959E+09, -4.182879252045648E+09,  8.752984506169835E+08,  5.253371945580917E+00, -2.675695673555306E+00, -1.233257601938801E+00,[17,26,223,224,227,232]),
+        //new body("Pluto Barycenter",color(0),0,0,-1.478626345058959E+09, -4.182879252045648E+09,  8.752984506169835E+08,  5.253371945580917E+00, -2.675695673555306E+00, -1.233257601938801E+00,[17,26,223,224,227,232]),
 
       //new body(w/6   ,h/2,80000,0, -6,color(255,0,0)),
       //new body(w*5/6,h/2,160000,0, 3,color(50,150,250)),
@@ -360,9 +376,46 @@ function setup() {
       //new body("2002 AW",color(230),384,3e20,-1.604458904014602E+08,  7.423705729773158E+07, -2.170340085078478E+05, -5.149833263865792E+00, -2.554488985956115E+01,  2.556986405650736E-01),
       //new body(w/2   ,h/2,3,0, 0,color(0,200,0)),
   ];
+  var satmag=allBodies[2].pos.mag()*0.9;
+  for(var i=0;i<allBodies.length;i++){
+    if(allBodies[i].name.indexOf("20")<0){
+      presets[1].bodies.push(i);
+    }
+    if(allBodies[i].m>1e20){
+      presets[2].bodies.push(i);
+    }
+    if(allBodies[i].m>1e18){
+      presets[3].bodies.push(i);
+    }
+    presets[4].bodies.push(i);
+    if(allBodies[i].pos.mag()<satmag){
+      presets[5].bodies.push(i);
+    }
+    if(allBodies[i].pos.mag()>satmag*1.5){
+      presets[6].bodies.push(i);
+    }
+    if(allBodies[i].name.indexOf("20")>=0){
+      presets[7].bodies.push(i);
+    }
+    if(i!=1&&allBodies[i].pos.dist(allBodies[1].pos)<1e8){
+      presets[8].bodies.push(i);
+    }
+    if(i!=2&&allBodies[i].pos.dist(allBodies[2].pos)<1e8){
+      presets[9].bodies.push(i);
+    }
+    if(i!=3&&allBodies[i].pos.dist(allBodies[3].pos)<1e8){
+      presets[10].bodies.push(i);
+    }
+    if(i!=4&&allBodies[i].pos.dist(allBodies[4].pos)<1e8){
+      presets[11].bodies.push(i);
+    }
+    if(i!=16&&allBodies[i].pos.dist(allBodies[16].pos)<1e8){
+      presets[12].bodies.push(i);
+    }
+  }
+  applyPreset();
   dir=createVector(0,0);
 
-  textSize(30);
   textFont("monospace");
 }
 var KM_AU=1.496e+8;
@@ -370,9 +423,6 @@ var tickspf=1;
 
 var currentDate=946713600000;
 
-//var scle=5e-7;
-//var bubble=1e4;
-//var mlt=1;
 var scle=5e-7;
 var bubble=2e7;
 var mlt=15;
@@ -394,15 +444,43 @@ var sinT0=0;
 var cosT0=0;
 var sinT1=0;
 var cosT1=0;
+var stats=true;
 
 var sml=1;
+
+var humanTime=function(mil){
+  var t=mil;
+  if(t<1000){
+    return (t*100>>0)/100+" ms";
+  }
+  t/=1000;
+  if(t<60){
+    return (t*100>>0)/100+" sec";
+  }
+  t/=60;
+  if(t<60){
+    return (t*100>>0)/100+" min";
+  }
+  t/=60;
+  if(t<48){
+    return (t*100>>0)/100+" hrs";
+  }
+  t/=24;
+  if(t<21){
+    return (t*100>>0)/100+" days";
+  }
+  t/=7;
+  if(t<16){
+    return (t*100>>0)/100+" weeks";
+  }
+  t/=365.25/7;
+  return (t*100>>0)/100+" yrs";
+};//takes milliseconds
+
 function draw() {
   FB=bodies[focusBody];
   background(0);
-  textAlign(LEFT,TOP);
-  fill(255);
-  var dat=new Date(currentDate);
-  text(dat.toString().split(' ').splice(0,5).join(' ')+"\n"+bodies[focusBody].name,5,5);
+  push();
   if(mouseIsPressed){
     thetas[0]+=(mouseX - pmouseX)/100*sensi;
     thetas[1]-=(mouseY - pmouseY)/100*sensi;
@@ -469,6 +547,85 @@ function draw() {
   }
   for(var i=0;i<bodies.length;i++){
     bodies[i].move(true);
+  }
+
+  pop();
+  if(stats){
+    textSize(30);
+    textAlign(LEFT,TOP);
+    fill(255);
+    var dat=new Date(currentDate);
+    text(dat.toString().split(' ').splice(0,5).join(' ')+"\n"+bodies[focusBody].name,5,5);
+    textAlign(RIGHT,TOP);
+    text(presets[onPreset].name+"\n"+bodies.length+" bodies\n"+(tickspf>>0)+" steps/frame\n"+humanTime(speed*1000)+"/step"+(trails?"\n"+(trailsPerFrame>>0)+" trails/frame\n"+(pts>>0)+" point trail length":""),w-5,5);
+
+    textSize(20);
+    textAlign(LEFT,BOTTOM);
+    if(10000*scle*KM_AU<w/2){
+      text("10,000 AU",5,h-15);
+      rect(5,h-10,10000*scle*KM_AU,5);
+    }
+    else if(1000*scle*KM_AU<w/2){
+      text("1,000 AU",5,h-15);
+      rect(5,h-10,1000*scle*KM_AU,5);
+    }
+    else if(100*scle*KM_AU<w/2){
+      text("100 AU",5,h-15);
+      rect(5,h-10,100*scle*KM_AU,5);
+    }
+    else if(10*scle*KM_AU<w/2){
+      text("10 AU",5,h-15);
+      rect(5,h-10,10*scle*KM_AU,5);
+    }
+    else if(scle*KM_AU<w/2){
+      text("1 AU",5,h-15);
+      rect(5,h-10,scle*KM_AU,5);
+    }
+    else if(scle*KM_AU/10<w/2){
+      text("0.1 AU",5,h-15);
+      rect(5,h-10,scle*KM_AU/10,5);
+    }
+    else if(scle*1000000<w/2){
+      text("1 million km",5,h-15);
+      rect(5,h-10,scle*1000000,5);
+    }
+    else if(scle*100000<w/2){
+      text("100 thousand km",5,h-15);
+      rect(5,h-10,scle*100000,5);
+    }
+    else if(scle*10000<w/2){
+      text("10 thousand km",5,h-15);
+      rect(5,h-10,scle*10000,5);
+    }
+    else if(scle*1000<w/2){
+      text("1 thousand km",5,h-15);
+      rect(5,h-10,scle*1000,5);
+    }
+    else if(scle*100<w/2){
+      text("100 km",5,h-15);
+      rect(5,h-10,scle*100,5);
+    }
+    else if(scle*10<w/2){
+      text("10 km",5,h-15);
+      rect(5,h-10,scle*10,5);
+    }
+    else if(scle<w/2){
+      text("1 km",5,h-15);
+      rect(5,h-10,scle,5);
+    }
+    else if(scle/10<w/2){
+      text("100 m",5,h-15);
+      rect(5,h-10,scle/10,5);
+    }
+    else if(scle/100<w/2){
+      text("10 m",5,h-15);
+      rect(5,h-10,scle/100,5);
+    }
+    else{
+      text("1 m",5,h-15);
+      rect(5,h-10,scle/1000,5);
+    }
+    textSize(30);
   }
 }
 
@@ -542,13 +699,16 @@ var body=function(name,c,r,mass,x,y,z,vx,vy,vz,exclude){
   points[this.id]=[];
   while(points[this.id].length<pts){points[this.id].push([-1,-1]);}
 }
-body.prototype.reset=function(){
+body.prototype.reset=function(newId){
   this.pos.x=this.bodytpos[0];
   this.pos.y=this.bodytpos[1];
   this.pos.z=this.bodytpos[2];
   this.v.x=this.bodytv[0];
   this.v.y=this.bodytv[1];
   this.v.z=this.bodytv[2];
+  this.id=newId;
+  points[this.id]=[];
+  while(points[this.id].length<pts){points[this.id].push([-1,-1]);}
 }
 body.prototype.draw=function(){
     if(this.hide){return;}
@@ -645,6 +805,9 @@ body.prototype.changeV=function(id){
             var dis=dir.mag();
             dis*=dis;
             dir.normalize();
+            if(speed*G*bodies[i].m/dis>=Infinity){
+              //console.log(bodies[i]);
+            }
             dir.mult(speed*G*bodies[i].m/dis);
             this.v.add(dir);
         }
@@ -652,9 +815,18 @@ body.prototype.changeV=function(id){
 }
 function resetbodies(){
   currentDate=946713600000;
+  points=[];
   for(var i=0;i<bodies.length;i++){
     bodies[i].reset(i);
   }
+}
+function applyPreset(){
+  bodies=[];
+  for(var i=0;i<presets[onPreset].bodies.length;i++){
+    bodies.push(allBodies[presets[onPreset].bodies[i]]);
+  }
+  focusBody=presets[onPreset].focus;
+  resetbodies();
 }
 function goToDate(goTo,stepSize,precision){
   speed=stepSize?stepSize:360;
@@ -850,6 +1022,11 @@ function keyPressed() {
     else if (key === "Z") {
       thetas=[0,0];
     }
+    else if (key === "P") {
+      onPreset--;
+      if(onPreset<0){onPreset=presets.length-1;}
+      applyPreset();
+    }
   }
   else if (key === " ") {
     speed=1/tickspf/30;
@@ -925,6 +1102,14 @@ function keyPressed() {
   }
   else if (key === "t") {
     trails=!trails;
+  }
+  else if (key === "p") {
+    onPreset++;
+    if(onPreset>=presets.length){onPreset=0;}
+    applyPreset();
+  }
+  else if (key === "`") {
+    stats=!stats;
   }
   else if (keyCode === LEFT_ARROW) {
     speed*=-1;

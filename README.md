@@ -20,6 +20,10 @@ Masses and radi taken from a combination of JPL and Wikipedia.
 - `SHIFT+Z` to set view to looking top down, axis aligning x & y rotation
 - `Z` to zoom out to looking top down, axis aligning x & y rotation, and setting size of bodies to true scale
 
+## Change preset
+- `P` to go to next preset
+- `SHIFT+P` to go to previous preset
+
 ## Time control
 - `SHIFT+R` to reset to back to Jan 1st, 2000 (fast, and good to do if things get off)
 - `W` to increase step size
@@ -33,7 +37,6 @@ Masses and radi taken from a combination of JPL and Wikipedia.
 - `SHIFT+SPACE` to set step size to 1 hour per frame
 - `N` to simulate up to today's date (may take a while)
 
-
 ## View of bodies
 - `Q` to increase size of bodies exponentially by radius
 - `A` to decrease size of bodies exponentially by radius
@@ -44,10 +47,11 @@ Masses and radi taken from a combination of JPL and Wikipedia.
 - `BACKSPACE` to set size of bodies to true scale
 - `SHIFT+BACKSPACE` to set size of bodies to exaggerated scale
 
-## Hide bodies
+## Toggle Hide
 - `SHIFT+N` to toggle hide body names
 - `H` to hide current selected body
 - `SHIFT+H` to hide toggle hide all bodies except currently selected body
+- `` ` `` to hide stats
 
 ## Lock with sun
 - `1` to toggle visual lock with sun
