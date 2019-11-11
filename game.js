@@ -1,4 +1,4 @@
-var w,h,points=[],allBodies=[],bodies=[],dir,t=255,pts=255/10;
+var w,h,points=[],allBodies=[],bodies=[],nbody={},dir,t=255,pts=255/10;
 var G=6.67408e-20;
 var presets=[
   {name:"Minimal",focus:0,bodies:[0,1,2,3,4,5,6,7,10,13,16]},
@@ -378,6 +378,7 @@ function setup() {
   ];
   var satmag=allBodies[2].pos.mag()*0.9;
   for(var i=0;i<allBodies.length;i++){
+    nbody[allBodies[i].name]=allBodies[i];
     if(allBodies[i].name.indexOf("20")<0){
       presets[1].bodies.push(i);
     }
@@ -449,6 +450,9 @@ var stats=true;
 var sml=1;
 
 var humanTime=function(mil){
+  if(mil<0){
+    return "-"+humanTime(-mil);
+  }
   var t=mil;
   if(t<1000){
     return (t*100>>0)/100+" ms";
@@ -475,7 +479,8 @@ var humanTime=function(mil){
   }
   t/=365.25/7;
   return (t*100>>0)/100+" yrs";
-};//takes milliseconds
+};
+//takes milliseconds
 
 function draw() {
   FB=bodies[focusBody];
@@ -486,7 +491,7 @@ function draw() {
     thetas[1]-=(mouseY - pmouseY)/100*sensi;
   }
   if(sunCenter){
-    thetas[0]=-Math.atan2(bodies[focusBody].pos.y-bodies[0].pos.y,bodies[focusBody].pos.x-bodies[0].pos.x)*sml+Math.PI/2;
+    thetas[0]=-Math.atan2(bodies[focusBody].pos.y-bodies[0].pos.y,bodies[focusBody].pos.x-bodies[0].pos.x)*sml-Math.PI/2;
   }
 
   sinT0=Math.sin(thetas[0]);
@@ -830,7 +835,7 @@ function applyPreset(){
 }
 function goToDate(goTo,stepSize,precision){
   speed=stepSize?stepSize:360;
-  var Precision=precision?precision:3;
+  var Precision=precision?precision:5;
   resetbodies();
   var j=0
   if(currentDate>goTo){
@@ -843,7 +848,7 @@ function goToDate(goTo,stepSize,precision){
         bodies[i].move(false);
       }
     }
-    speed/=-10;
+    speed/=-2;
     j++;
   }
   for(;j<Precision;j++){
@@ -855,7 +860,7 @@ function goToDate(goTo,stepSize,precision){
         bodies[i].move(false);
       }
     }
-    speed/=-10;
+    speed/=-2;
     while(currentDate>goTo){
       for(var i=0;i<bodies.length;i++){
         bodies[i].changeV(i);
@@ -864,7 +869,7 @@ function goToDate(goTo,stepSize,precision){
         bodies[i].move(false);
       }
     }
-    speed/=-10;
+    speed/=-2;
   }
   speed=1/tickspf/30;
 }
@@ -882,36 +887,36 @@ function step(seconds){
 function getNextApproach(bodya,bodyb,initialStepSize,precision){
   var stepSize=initialStepSize?initialStepSize:360;
 
-  var ldis=bodies[bodya].pos.dist(bodies[bodyb].pos);
+  var ldis=bodya.pos.dist(bodyb.pos);
   step(stepSize);
-  var dis=bodies[bodya].pos.dist(bodies[bodyb].pos);
+  var dis=bodya.pos.dist(bodyb.pos);
   while(dis>ldis){
   	step(stepSize);
   	ldis=dis;
-  	dis=bodies[bodya].pos.dist(bodies[bodyb].pos);
+  	dis=bodya.pos.dist(bodyb.pos);
   }
   var Precision=precision?precision:5;
   for(var i=0;i<Precision;i++){
-    ldis=bodies[bodya].pos.dist(bodies[bodyb].pos);
+    ldis=bodya.pos.dist(bodyb.pos);
     step(stepSize);
-    dis=bodies[bodya].pos.dist(bodies[bodyb].pos);
+    dis=bodya.pos.dist(bodyb.pos);
     while(dis<ldis){
     	step(stepSize);
     	ldis=dis;
-    	dis=bodies[bodya].pos.dist(bodies[bodyb].pos);
+    	dis=bodya.pos.dist(bodyb.pos);
     }
-    stepSize/=-10;
-    ldis=bodies[bodya].pos.dist(bodies[bodyb].pos);
+    stepSize/=-2;
+    ldis=bodya.pos.dist(bodyb.pos);
     step(stepSize);
-    dis=bodies[bodya].pos.dist(bodies[bodyb].pos);
+    dis=bodya.pos.dist(bodyb.pos);
     while(dis<ldis){
     	step(stepSize);
     	ldis=dis;
-    	dis=bodies[bodya].pos.dist(bodies[bodyb].pos);
+    	dis=bodya.pos.dist(bodyb.pos);
     }
-    stepSize/=-10;
+    stepSize/=-2;
   }
-  console.log(bodies[bodya].name+" is closest to "+bodies[bodyb].name+" on\n"+new Date(currentDate).toString().split(' ').splice(0,5).join(' ')+" at a distance of\n"+dis+" km, or\n"+dis/KM_AU+" AU");
+  console.log(bodya.name+" is closest to "+bodyb.name+" on\n"+new Date(currentDate).toString().split(' ').splice(0,5).join(' ')+" at a distance of\n"+dis+" km, or\n"+dis/KM_AU+" AU");
   return dis;
 };
 var shifting=false;
@@ -990,7 +995,7 @@ function keyPressed() {
       mlt=15;
     }
     else if (keyCode === CONTROL) {
-      thetas[1]=-Math.PI/2;
+      thetas[1]=Math.PI/2;
     }
     else if (key === "E") {
       bubble*=15;

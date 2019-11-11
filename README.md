@@ -68,3 +68,31 @@ Masses and radi taken from a combination of JPL and Wikipedia.
 - `SHIFT+T+DOWN ARROW` decrease trails stroke width
 - `O` increase points per trail
 - `L` decrease points per trail
+
+# Console commands
+You can use these commands by going into the console (F12 on Chrome, may vary by browser)
+
+## getNextApproach(bodyA,bodyB,initialStepSize*,precision*)
+This function will simulate up to the next point in which to bodies reach their closest part of a flyby.
+The bodys can be grabbed from the `nbody` object where they key for a body is its name.
+
+`initialStepSize` is the amount of time in seconds that the steps are when simulating, and then it will binary search its way `precision` times to get closer to the moment of closest approach. Both `initialStepSize` and `precision` are optional, the default step size is 360 (6 minutes), and default precision is 5.
+
+One application for this would be simulating up to the next potential Venus transit:
+```javascript
+//getNextApproach(bodya,bodyb,precision*);
+getNextApproach(nbody.Earth,nbody.Venus);
+```
+
+Using a body that's not part of the currently selected preset will not work, although it will still work if one or both of the bodies are hidden.
+
+## goToDate(date,initialStepSize*,precision*)
+
+Similar to `getNextApproach()` but instead of looking for an approach, it targets a specific date, and for precision, it resets back to J2000 before simulating.
+
+`date` is the date in milliseconds from 1970, `initialStepSize` and `precision` work the same as in `getNextApproach()`
+
+One application for this would be going to the date of an interesting event, like the 2004 Venus transit:
+```javascript
+goToDate(new Date("June 8, 2004").getTime())
+```
