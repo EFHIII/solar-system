@@ -15,7 +15,7 @@ var presets=[
   {name:"Neptune's moons",focus:3,bodies:[0,1,2,3,4,5,6,7,10,13,16]},//Neptune
   {name:"Pluto's moons",focus:10,bodies:[0,1,2,3,4,5,6,7,10,13,16]},//Pluto
 ];
-var onPreset=0;
+var onPreset=2;
 function setup() {
   createCanvas(windowWidth, windowHeight);
   frameRate(60);
