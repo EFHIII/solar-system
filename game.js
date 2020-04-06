@@ -1,3 +1,33 @@
+var help=document.getElementById("help");
+
+var helping=true;
+function toggleHelp(){
+    var can=document.getElementsByTagName("canvas")[0];
+    var b=document.body.style;
+    if(helping){
+        can.style.position="relative";
+        help.style.visibility="hidden";
+        help.style.position="fixed";
+
+        b.overflow="hidden";
+        b.margin="0";
+
+        windowResized();
+    }
+    else{
+        help.style.visibility="visible";
+        help.style.position="relative";
+        can.style.position="fixed";
+
+        b.overflow="auto";
+        can.style.top=0;
+        can.style.left=0;
+    }
+    helping=!helping;
+}
+
+document.getElementById("close").addEventListener("click",toggleHelp);
+
 var w,h,points=[],allBodies=[],bodies=[],nbody={},dir,t=255,pts=255/10;
 var G=6.67408e-20;
 var presets=[
@@ -668,17 +698,12 @@ function vert3d(x,y,z,d){
 /*
 function line3d(x1,y1,z1,x2,y2,z2,d,c){
   var t=[x1,y1,z1];
-
   t=[t[0]*cosT0-t[1]*sinT0,t[0]*sinT0+t[1]*cosT0,t[2]];
-
   t=[t[0],t[1]*cosT1-t[2]*sinT1,t[1]*sinT1+t[2]*cosT1];
   tt=[t[0],t[1]];
   t=[x2,y2,z2];
-
   t=[t[0]*cosT0-t[1]*sinT0,t[0]*sinT0+t[1]*cosT0,t[2]];
-
   t=[t[0],t[1]*cosT1-t[2]*sinT1,t[1]*sinT1+t[2]*cosT1];
-
   if(c){stroke(c);}
   strokeWeight(d);
   line(t[0],t[1],tt[0],tt[1]);
@@ -789,7 +814,6 @@ body.prototype.move=function(pt){
 }
 body.prototype.changeV=function(id){
 /*
-
     dir.x=bodies[i].x-this.x;
     dir.y=bodies[i].y-this.y;
     dir.normalize();
@@ -926,7 +950,10 @@ function keyReleased() {
   holding[1][keyCode]=false;
 }
 function keyPressed() {
-  if(holding[1][UP_ARROW]){
+  if (key === "?" || key === "/") {
+      toggleHelp();
+  }
+  else if(holding[1][UP_ARROW]){
     if (key === "w") {
       tickspf*=1.5;
     }
@@ -1137,7 +1164,6 @@ function touchBodyted () {
     fullscreen(true);
   }
 }
-
 /* full screening will change the size of the canvas */
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
@@ -1152,4 +1178,3 @@ function windowResized() {
 document.ontouchmove = function(event) {
     event.preventDefault();
 }
-/*cool*/

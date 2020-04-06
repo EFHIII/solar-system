@@ -1,22 +1,156 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title>Solar System model</title>
     <style media="screen">
-      html, body {
-        padding: 0;
-        margin: 0;
-        background-color: white;
-        overflow:hidden;
-        background-color:black;
-      }
-    </style>
-  </head>
-  <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+html, body {
+  padding: 0;
+  margin: 0;
+}
 
-    <!--p5.js code-->
-    <script src="game.js" type="text/javascript"></script>
-  </body>
+#help{
+  background-color: rgba(0,0,0,0.75);
+  color:white;
+  padding:0.5em;
+}
+#help a{
+  color:#8f8;
+}
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index: -1;
+}
+#close{
+  background-color:red;
+  color:white;
+  border:none;
+  width:2em;
+  height:2em;
+  border-radius: 1em;
+}
+#close:hover{
+  background-color:#f33;
+  cursor:pointer;
+}
+code{
+  background-color:#222;
+  padding-left:3px;
+  padding-right:3px;
+  border-radius:2px;
+}
+.highlight{
+  background-color:#222;
+  padding:3px;
+  border-radius:3px;
+}
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+    <div id="help">
+        <div style="width:100%;height:1em;"><button style="float:right" id="close">✖</button></div>
+        <p>Velocities on J2000 taken from JPL: <a href="https://wgc.jpl.nasa.gov:8443/webgeocalc/#StateVector" rel="nofollow">https://wgc.jpl.nasa.gov:8443/webgeocalc/#StateVector</a>
+            Masses and radi taken from a combination of JPL and Wikipedia.</p>
+        <h1>Controls (press <code>?</code> to open/close this help page)</h1>
+        <h2>Zoom</h2>
+        <ul>
+            <li><code>UP ARROW</code> to zoom in</li>
+            <li><code>DOWN ARROW</code> to zoom out</li>
+        </ul>
+        <h2>Move around</h2>
+        <ul>
+            <li><code>Click+drag</code> to rotate</li>
+            <li><code>R</code> to look at the next body (ordered by mass)</li>
+            <li><code>F</code> to look at the previous body (ordered by mass)</li>
+            <li><code>SHIFT+Q</code> to increase rotation speed when click+dragging</li>
+            <li><code>SHIFT+A</code> to decrease rotation speed when click+dragging</li>
+            <li><code>CTRL</code> to set view to top down looking down on the ecliptic</li>
+            <li><code>SHIFT+CTRL</code> to set view to looking along the ecliptic</li>
+            <li><code>SHIFT+Z</code> to set view to looking top down, axis aligning x &amp; y rotation</li>
+            <li><code>Z</code> to zoom out to looking top down, axis aligning x &amp; y rotation, and setting size of bodies to true scale</li>
+        </ul>
+        <h2>Change preset</h2>
+        <ul>
+            <li><code>P</code> to go to next preset</li>
+            <li><code>SHIFT+P</code> to go to previous preset</li>
+        </ul>
+        <h2>Time control</h2>
+        <ul>
+            <li><code>SHIFT+R</code> to reset to back to Jan 1st, 2000 (fast, and good to do if things get off)</li>
+            <li><code>W</code> to increase step size</li>
+            <li><code>S</code> to decrease step size</li>
+            <li><code>LEFT Arrow</code> toggle reverse time</li>
+            <li><code>W+UP ARROW</code> to increase steps per frame</li>
+            <li><code>W+DOWN ARROW</code> to decrease steps per frame</li>
+            <li><code>W+LEFT ARROW</code> to set 1 step per frame</li>
+            <li><code>W+RIGHT ARROW</code> to set 100 steps per frame</li>
+            <li><code>SPACE</code> to set step size to ~real time</li>
+            <li><code>SHIFT+SPACE</code> to set step size to 1 hour per frame</li>
+            <li><code>N</code> to simulate up to today's date (may take a while)</li>
+        </ul>
+        <h2>View of bodies</h2>
+        <ul>
+            <li><code>Q</code> to increase size of bodies exponentially by radius</li>
+            <li><code>A</code> to decrease size of bodies exponentially by radius</li>
+            <li><code>E</code> to increase minimum size of bodies</li>
+            <li><code>D</code> to decrease minimum size of bodies</li>
+            <li><code>SHIFT+E</code> to increase minimum size of bodies 10x</li>
+            <li><code>SHIFT+D</code> to decrease minimum size of bodies 10x</li>
+            <li><code>BACKSPACE</code> to set size of bodies to true scale</li>
+            <li><code>SHIFT+BACKSPACE</code> to set size of bodies to exaggerated scale</li>
+        </ul>
+        <h2>Toggle Hide</h2>
+        <ul>
+            <li><code>SHIFT+N</code> to toggle hide body names</li>
+            <li><code>H</code> to hide current selected body</li>
+            <li><code>SHIFT+H</code> to hide toggle hide all bodies except currently selected body</li>
+            <li><code>`</code> to hide stats</li>
+        </ul>
+        <h2>Lock with sun</h2>
+        <ul>
+            <li><code>1</code> to toggle visual lock with sun</li>
+        </ul>
+        <h2>Trails</h2>
+        <ul>
+            <li><code>T</code> to toggle trails</li>
+            <li><code>B</code> to toggle relative to selected body vs relative to Sun</li>
+            <li><code>SHIFT+T</code> to toggle dotted trails</li>
+            <li><code>T+UP ARROW</code> increase trails dot rate</li>
+            <li><code>T+DOWN ARROW</code> decrease trails dot rate</li>
+            <li><code>T+LEFT ARROW</code> set trails dot rate to 1/frame</li>
+            <li><code>T+RIGHT ARROW</code> set trails dot rate to 10/frame</li>
+            <li><code>SHIFT+T+UP ARROW</code> increase trails stroke width</li>
+            <li><code>SHIFT+T+DOWN ARROW</code> decrease trails stroke width</li>
+            <li><code>O</code> increase points per trail</li>
+            <li><code>L</code> decrease points per trail</li>
+        </ul>
+        <h1>Console commands</h1>
+        <p>You can use these commands by going into the console (F12 on Chrome, may vary by browser)</p>
+        <h2>getNextApproach(bodyA,bodyB,initialStepSize*,precision*)</h2>
+        <p>This function will simulate up to the next point in which to bodies reach their closest part of a flyby.
+            The bodys can be grabbed from the <code>nbody</code> object where they key for a body is its name.</p>
+        <p><code>initialStepSize</code> is the amount of time in seconds that the steps are when simulating, and then it will binary search its way <code>precision</code> times to get closer to the moment of closest approach. Both <code>initialStepSize</code> and <code>precision</code> are optional, the default step size is 360 (6 minutes), and default precision is 5.</p>
+        <p>One application for this would be simulating up to the next potential Venus transit:</p>
+        <div class="highlight highlight-source-js">
+            <pre><span class="pl-c"><span class="pl-c">//</span>getNextApproach(bodya,bodyb,precision*);</span>
+<span class="pl-en">getNextApproach</span>(<span class="pl-smi">nbody</span>.<span class="pl-smi">Earth</span>,<span class="pl-smi">nbody</span>.<span class="pl-smi">Venus</span>);</pre>
+        </div>
+        <p>Using a body that's not part of the currently selected preset will not work, although it will still work if one or both of the bodies are hidden.</p>
+        <h2>goToDate(date,initialStepSize*,precision*)</h2>
+        <p>Similar to <code>getNextApproach()</code> but instead of looking for an approach, it targets a specific date, and for precision, it resets back to J2000 before simulating.</p>
+        <p><code>date</code> is the date in milliseconds from 1970, <code>initialStepSize</code> and <code>precision</code> work the same as in <code>getNextApproach()</code></p>
+        <p>One application for this would be going to the date of an interesting event, like the 2004 Venus transit:</p>
+        <div class="highlight highlight-source-js">
+            <pre><span class="pl-en">goToDate</span>(<span class="pl-k">new</span> <span class="pl-en">Date</span>(<span class="pl-s"><span class="pl-pds">"</span>June 8, 2004<span class="pl-pds">"</span></span>).<span class="pl-c1">getTime</span>())</pre>
+        </div>
+
+    </div>
+    <script src="game.js"></script>
+</body>
+
 </html>
